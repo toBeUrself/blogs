@@ -1,2 +1,2 @@
-# blogs
-This repo is created to record my blogs 
+# 路漫漫其修远兮，吾将上下而求索
+一个人或许不用考虑太多，就可以不停往前走
