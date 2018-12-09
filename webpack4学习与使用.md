@@ -43,6 +43,7 @@ new HtmlWebpackPlugin({
 + clean-webpack-plugin copy-webpack-plugin
 
 *插件看起来就很字面上的作用*
+
 `new CleanWebpackPlugin(['dist'])`
 
 ```
@@ -79,6 +80,7 @@ new MiniCssExtractPlugin({
 *这个插件很有用,可以看到打包后的文件具体包含了哪些部分，模块。配置较为简单[参考](https://www.jianshu.com/p/4cdaeaa01fd5).以下给出我在项目中的配置。默认端口是8888，可以自己配置。*
 
 `const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;`
+
 `new BundleAnalyzerPlugin({ analyzerPort: 8919 })`
 
 + compression-webpack-plugin
