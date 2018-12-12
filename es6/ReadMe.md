@@ -2,4 +2,4 @@
 
 >本系列文章皆参照**阮一峰**大神的[ES6入门书籍](http://es6.ruanyifeng.com/)及一些网上检索的资料。由于本人学识与能力有限，出错与遗漏不可避免，此系列文章仅供参考，其余概不负责！
 
-*[@天地独舞](https://tobeurself.github.io/)*
+[@天地独舞](https://tobeurself.github.io/)
