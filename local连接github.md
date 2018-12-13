@@ -14,7 +14,7 @@
 
 `git config --global user.email "ToBeUrself@163.com"`
 
-3. 可能仓库到本地
+3. 克隆仓库到本地
 
 `git clone 仓库地址`
 
