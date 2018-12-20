@@ -161,6 +161,7 @@ genObj.next('b')
 ```
 
 + 如果想要第一次调用next方法时，就能够输入值，可以在 Generator 函数外面再包一层
+
 ```
 function wrapper(generatorFunction) {
   return function (...args) {
@@ -204,6 +205,8 @@ try {
 // 内部捕获 a
 // 外部捕获 b
 ```
+
+
 + 上面代码中，遍历器对象i连续抛出两个错误。第一个错误被 Generator 函数体内的catch语句捕获。i第二次抛出错误，由于 Generator 函数内部的catch语句已经执行过了，不会再捕捉到这个错误了，所以这个错误就被抛出了 Generator 函数体，被函数体外的catch语句捕获。
 
 throw方法可以接受一个参数，该参数会被catch语句接收，建议抛出Error对象的实例。
@@ -254,6 +257,7 @@ g.throw();
 ```
 
 + throw方法抛出的错误要被内部捕获，前提是必须至少执行过一次next方法。
+
 ```
 function* gen() {
   try {
@@ -273,6 +277,7 @@ g.throw(1);
 ***throw方法被捕获以后，会附带执行下一条yield表达式。也就是说，会附带执行一次next方法。***
 
 一旦 Generator 执行过程中抛出错误，且没有被内部捕获，就不会再执行下去了。如果此后还调用next方法，将返回一个value属性等于undefined、done属性等于true的对象，即 JavaScript 引擎认为这个 Generator 已经运行结束了。
+
 ```
 function* g() {
   yield 1;
@@ -402,6 +407,7 @@ for (let v of bar()){
 ```
 
 + 再来看一个对比的例子。
+
 ```
 function* inner() {
   yield 'hello!';
@@ -435,6 +441,7 @@ gen.next().value // "close"
 7. 作为对象属性的 Generator 函数
 
 如果一个对象的属性是 Generator 函数，可以简写成下面的形式。
+
 ```
 let obj = {
   * myGeneratorMethod() {
