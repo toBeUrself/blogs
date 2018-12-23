@@ -98,4 +98,59 @@ function* asyncJob(){
 
 协程遇到yield命令就暂停，等到执行权返回，再从暂停的地方继续往后执行。它的最大优点就是代码的写法非常像同步操作，如果去除yield命令，简直就是一模一样。
 
++ Generator 函数可以暂停执行和恢复执行，这是他能封装异步任务的根本原因。除此之外，他还有两个特性，使他可以作为异步编程的完整解决方案：函数体内外的数据交换和错误处理机制。
 
+**** 
+
+4. 异步任务的封装
+
+下面看看如何使用一个 Generator 函数执行一个真实的异步任务。
+
+```
+var fetch = require('node-fetch');
+
+function* gen(){
+  var url = 'https://api.github.com/users/github';
+  var result = yield fetch(url);
+  console.log(result.bio);
+}
+
+var g = gen();
+var result = g.next();
+
+result.value.then(function(data){
+   g.next(data.json());
+});
+```
+
+上面代码中，首先执行 Generator 函数，获取遍历器对象，然后使用next方法（第二行），执行异步任务的第一阶段。由于Fetch模块返回的是一个 Promise 对象，因此要用then方法调用下一个next方法。
+
+可以看到，虽然 Generator 函数将异步操作表示得很简洁，但是流程管理却不方便（即何时执行第一阶段、何时执行第二阶段）。
+
+****
+
+5. Thunk 函数
+
+>Thunk 函数是自动执行 Generator 函数的一种方法。
+
+参数的求值策略
+
+Thunk 函数早在上个世纪60年代就诞生了。
+
+那时，编程语言刚刚起步，计算机科学家还在研究编译器怎么写比较好，一个争论的焦点是‘求值策略’，即函数的参数到底应该何时求值。
+
+```
+const x = 1;
+
+function f(m) {
+  return m * 2;
+}
+
+f(x + 5)
+```
+
+上面代码先定义函数f，然后向他传入表达式`x+5`。请问，这个表达式应该何时求值？
+
+一种意见是‘传值调用’（call by value），即在进入函数体之前，就计算x+5的值，再将这个结果传入函数f。C语言就采用这种策略。
+
+另一种意见是‘传名调用’，即直接将表达式x+5传入函数体，只在用到它的时候求值。Hashkell语言采用这种策略。
