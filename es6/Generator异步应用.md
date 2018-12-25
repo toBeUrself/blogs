@@ -154,3 +154,62 @@ f(x + 5)
 一种意见是‘传值调用’（call by value），即在进入函数体之前，就计算x+5的值，再将这个结果传入函数f。C语言就采用这种策略。
 
 另一种意见是‘传名调用’，即直接将表达式x+5传入函数体，只在用到它的时候求值。Hashkell语言采用这种策略。
+
+```
+function f(a, b){
+  return b;
+}
+
+f(3 * x * x - 2 * x - 1, x);
+```
+
++ 上面代码中，函数`f`的第一个参数是一个复杂的表达式，但是函数体内部没有用到。对这个参数求值是不必要的。因此，有一些计算机科学家倾向于“传名调用”，即只在执行时求值。
+
+**Thunk 函数的含义**
+
+编译器的“传名调用”实现，往往是将参数放到一个临时函数中，在将这个临时函数传入函数体。这个临时函数就是 Thunk 函数。
+
+```
+function f(m) {
+  return m * 2;
+}
+
+f(x + 5);
+
+// 等同于
+
+var thunk = function () {
+  return x + 5;
+};
+
+function f(thunk) {
+  return thunk() * 2;
+}
+```
+
++ 上面的代码中，函数 f 的参数 `x+5` 被一个函数替换了。凡是用到原参数的地方，对 Thunk 函数求值即可。这就是 Thunk 函数的定义，他是“传名调用”的一种实现策略，用来替换某个表达式。
+
+****
+
+6. JavaScript 语言的 Thunk 函数
+
+JavaScript 语言是传值调用，它的 Thunk 函数含义有所不同。在 JavaScript 语言中， Thunk 函数替换的不是表达式，而是多参数函数，将其替换成一个只接受回调函数作为参数的单参数函数。
+
+```
+// 正常版本的readFile（多参数版本）
+fs.readFile(fileName, callback);
+
+// Thunk版本的readFile（单参数版本）
+var Thunk = function (fileName) {
+  return function (callback) {
+    return fs.readFile(fileName, callback);
+  };
+};
+
+var readFileThunk = Thunk(fileName);
+readFileThunk(callback);
+```
+
+
+
+
