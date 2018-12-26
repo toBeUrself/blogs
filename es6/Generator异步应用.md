@@ -210,6 +210,159 @@ var readFileThunk = Thunk(fileName);
 readFileThunk(callback);
 ```
 
+上面代码中，fs模块的readFile方法是一个多参数函数，两个参数分别为文件名和回调函数。经过转换器处理，它变成了一个单参数函数，只接受回调函数作为参数。这个单参数版本，就叫做 Thunk 函数。
+
+任何函数，只要参数有回调函数，就能写成 Thunk 函数的形式。下面是一个简单的 Thunk 函数转换器
+
+```
+// ES5版本
+var Thunk = function(fn){
+  return function (){
+    var args = Array.prototype.slice.call(arguments);
+    return function (callback){
+      args.push(callback);
+      return fn.apply(this, args);
+    }
+  };
+};
+
+// ES6版本
+const Thunk = function(fn) {
+  return function (...args) {
+    return function (callback) {
+      return fn.call(this, ...args, callback);
+    }
+  };
+};
+```
+
+使用上面的转换器，生成fs.readFile的 Thunk 函数
+
+```
+var readFileThunk = Thunk(fs.readFile);
+readFileThunk(fileA)(callback);
+
+// 另外一个例子
+function f(a, cb) {
+  cb(a);
+}
+const ft = Thunk(f);
+
+ft(1)(console.log) // 1
+```
+****
+
+7 Generator 函数的流程管理
+
+Thunk 函数在之前其实没有什么用处，但是 ES6 有了 Generator 函数之后，Thunk 函数可以用于 Generator 函数的自动流程管理。
+
+**栗子：Generator 函数可以自动执行**
+
+```
+function* gen() {
+  // ...
+}
+
+var g = gen();
+var res = g.next();
+
+while(!res.done){
+  console.log(res.value);
+  res = g.next();
+}
+```
+
+上面代码中，Generator 函数gen会自动执行完所有步骤。
+
+但是，这不适合异步操作。如果必须保证前一步执行完，才能执行后一步，上面的自动执行就不可行。这时，Thunk 函数就能派上用处。以读取文件为例。下面的 Generator 函数封装了两个异步操作。
+
+```
+var fs = require('fs');
+var thunkify = require('thunkify');
+var readFileThunk = thunkify(fs.readFile);
+
+var gen = function* (){
+  var r1 = yield readFileThunk('/etc/fstab');
+  console.log(r1.toString());
+  var r2 = yield readFileThunk('/etc/shells');
+  console.log(r2.toString());
+};
+```
+
+上面代码中，yield命令用于将程序的执行权移出 Generator 函数，那么就需要一种方法，将执行权再交还给 Generator 函数。
+
+这种方法就是 Thunk 函数，因为它可以在回调函数里，将执行权交还给 Generator 函数。为了便于理解，我们先看如何手动执行上面这个 Generator 函数。
+
+```
+var g = gen();
+
+var r1 = g.next();
+r1.value(function (err, data) {
+  if (err) throw err;
+  var r2 = g.next(data);
+  r2.value(function (err, data) {
+    if (err) throw err;
+    g.next(data);
+  });
+});
+```
+
+上面代码中，变量g是 Generator 函数的内部指针，表示目前执行到哪一步。next方法负责将指针移动到下一步，并返回该步的信息（value属性和done属性）。
+
+仔细查看上面的代码，可以发现 Generator 函数的执行过程，其实是将同一个回调函数，反复传入next方法的value属性。这使得我们可以用递归来自动完成这个过程。
+
+**以下是基于 Promise 对象的自动执行**
+
+```
+var fs = require('fs');
+
+var readFile = function (fileName){
+  return new Promise(function (resolve, reject){
+    fs.readFile(fileName, function(error, data){
+      if (error) return reject(error);
+      resolve(data);
+    });
+  });
+};
+
+var gen = function* (){
+  var f1 = yield readFile('/etc/fstab');
+  var f2 = yield readFile('/etc/shells');
+  console.log(f1.toString());
+  console.log(f2.toString());
+};
+
+// 手动执行： 利用 then 方法 层层添加回调函数
+var g = gen();
+
+g.next().value.then(function(data){
+  g.next(data).value.then(function(data){
+    g.next(data);
+  });
+});
+
+// 自动执行器
+
+function run(gen){
+  var g = gen();
+
+  function next(data){
+    var result = g.next(data);
+    if (result.done) return result.value;
+    result.value.then(function(data){
+      next(data);
+    });
+  }
+
+  next();
+}
+
+run(gen);
+```
+
++ 可以看到利用递归这一点，很容易在上面实现了 Generator 的自动执行器。
+
+***Generator 是个很强大的东西，让异步程序可以写成同步的方式。***
 
 
 
