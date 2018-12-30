@@ -1,5 +1,3 @@
-# Generator 的语法
-
 >ES6 中为了更方便地写异步代码，在标准中引入了 `Async` 和 `Await`。而这么高大上的东西，其实就是 `Generator` 函数的语法糖。那么 Generator 是什么？
 
 1. 基本概念
