@@ -9,6 +9,7 @@
 **在形式上，比普通函数多了两个特征。一是，`function` 关键字与函数名之间有一个星号；二是，函数体内部使用 `yield` 表达式，定义不同的内部状态。**
 
 ***举个栗子***
+
 ```javascript
 function* FirstGenerator() {
   yield 'hello';
@@ -75,6 +76,7 @@ for (var f of flat(arr)){
 在学习 Iterator 的时候知道任意一个对象的 `Symbol.iterator` 方法，等于该对象的遍历器生成函数，调用该函数会返回该对象的一个遍历器对象。而 Generator 函数就是一个遍历器生成函数，所以可以把 Generator 函数赋值给对象的 Symbol.iterator 属性，从而使得该对象具有 Iterator 接口。然后该对象就可以被 `...` 运算符 `for...of` 等遍历了。
 
 ***举个栗子***
+
 ```
 var myIterable = {};
 myIterable[Symbol.iterator] = function* () {
@@ -87,6 +89,7 @@ myIterable[Symbol.iterator] = function* () {
 ```
 
 ***此外，Generator 函数执行后，返回一个遍历器对象。该对象本身也具有 Symbol.iterator 属性，执行后返回本身***
+
 ```
 function* gen(){
   // some code
@@ -103,6 +106,7 @@ g[Symbol.iterator]() === g
 yield 表达式本身是没有返回值的，或者说总是返回 undefined。next 方法可以带一个参数，该参数就会被当做**上一个** yield 表达式的返回值。
 
 ***举个栗子***
+
 ```
 function* f() {
   for(var i = 0; true; i++) {
@@ -123,6 +127,7 @@ g.next(true) // { value: 0, done: false }
 + 这个功能有很重要的语法意义。Generator 函数从暂停状态到恢复运行，它的上下文状态（context）是不变的。通过next方法的参数，就有办法在 Generator 函数开始运行之后，继续向函数体内部注入值。也就是说，可以在 Generator 函数运行的不同阶段，从外部向内部注入不同的值，从而调整函数行为。
 
 ***另外一个栗子***
+
 ```
 function* foo(x) {
   var y = 2 * (yield (x + 1));
@@ -476,6 +481,7 @@ obj.hello() // 'hi!'
 + 上面代码表明，Generator 函数g返回的遍历器obj，是g的实例，而且继承了g.prototype。但是，如果把g当作普通的构造函数，并不会生效，因为g返回的总是遍历器对象，而不是this对象。
 
 ***复杂些的栗子***
+
 ```
 function* gen() {
   this.a = 1;
