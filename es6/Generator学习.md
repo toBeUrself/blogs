@@ -51,9 +51,9 @@ Generator 函数里面可以执行很多次 yield 和一次 return，所以 Gene
 + 另外需要注意，yield表达式只能用在 Generator 函数里面，用在其他地方都会报错
 
 ***举个栗子***
+
 ```
 var arr = [1, [[2, 3], 4], [5, 6]];
-
 var flat = function* (a) {
   a.forEach(function (item) {
     if (typeof item !== 'number') {
