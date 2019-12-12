@@ -24,7 +24,7 @@ WebAssembly(wasm)会带来运行时性能的大幅度提升，由于在社区的
 
 *这个插件还是很好用的，用于生成一个html文件并且自动引入一些需要用到的css和js文件。*
 
-```
+```javascript
 new HtmlWebpackPlugin({
     title: 'Tims blogs',
     template: './main.html',
@@ -47,7 +47,7 @@ new HtmlWebpackPlugin({
 
 `new CleanWebpackPlugin(['dist'])`
 
-```
+```javascript 
 new CopyWebpackPlugin([{
     from: __dirname + '/css',
     to: __dirname + '/dist/css'
