@@ -5,4 +5,6 @@
 
 ***忘了是什么时候，我突然像是明白了一个道理：我不缤纷精彩的人生，或许努力做好一件事情，便是大善。***
 
+[Learning Javascript patterns online](https://addyosmani.com/resources/essentialjsdesignpatterns/book/)
+
 [@天地独舞](https://tobeurself.github.io/#)
